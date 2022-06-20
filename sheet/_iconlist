@@ -28,5 +28,5 @@ md	= u58889
 lf	= u62558
 gitignore	= u61907
 rb	= u59193
-*	= u61736
+/.*/	= u61736
 [endext]
