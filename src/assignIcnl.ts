@@ -12,7 +12,7 @@ const lang = langAssignIcnl[useLanguage()];
 
 const main = () => {
   const nlcode = '\r\n';
-  const printError = hasArg('1');
+  const isPrint = hasArg('1');
   const cacheDir = PPx.Extract("%sgu'ppmcache'");
   const iconList = `${cacheDir}\\list\\_iconlist`;
   const unsetCfg = `${cacheDir}\\ppm\\unset\\ppm-iconicfont.cfg`;
@@ -37,7 +37,7 @@ const main = () => {
     }
   }
 
-  if (printError) {
+  if (isPrint) {
     PPx.report(errorMsg.join(nlcode));
   }
 };

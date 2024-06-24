@@ -1,3 +1,4 @@
+import '@ppmdev/polyfills/stringTrim.ts';
 import '@ppmdev/polyfills/objectKeys.ts';
 import {properties} from '@ppmdev/parsers/table.ts';
 import {hexToNum} from '@ppmdev/modules/util.ts';
@@ -10,11 +11,28 @@ type Prop = {[K in string]: string};
 const [GROUP, END_GROUP] = ['[group]', '[endgroup]'];
 const [EXT, END_EXT] = ['[ext]', '[endext]'];
 
+const roundCharCode = (code: string): string | undefined => {
+  if (code.indexOf('x') === 0) {
+    const n = hexToNum(code.substring(1));
+
+    if (isBottom(n)) {
+      return;
+    }
+
+    code = `u${n}`;
+  } else if (code.indexOf('u') === 0) {
+    if (!/^u[0-9]+$/.test(code)) {
+      return;
+    }
+  }
+
+  return code;
+};
 export const getIcons = (lines: string[]): {icons: Prop; errors: string[]} => {
   const group: Group = {};
   const icons: Prop = {};
   const errors: string[] = [];
-  const rgx = /^(\S+)[\s=]+(.+)$/;
+  const rgx = /^([^\s=]+)[\s=]+(.+)$/;
 
   for (let i = 0, k = lines.length; i < k; i++) {
     const line = lines[i];
@@ -23,8 +41,12 @@ export const getIcons = (lines: string[]): {icons: Prop; errors: string[]} => {
       for (; i < k; i++) {
         const groupLine = lines[i];
 
-        if (groupLine.indexOf(';') === 0 || groupLine.indexOf(END_GROUP) === 0) {
+        if (groupLine.indexOf(END_GROUP) === 0) {
           break;
+        }
+
+        if (groupLine.indexOf(';') === 0) {
+          continue;
         }
 
         groupLine.replace(rgx, (_, p1, p2) => (group[p1.toUpperCase()] = p2.split(',')));
@@ -46,7 +68,7 @@ export const getIcons = (lines: string[]): {icons: Prop; errors: string[]} => {
         }
 
         extLine.replace(rgx, (_, p1, p2) => {
-          let char = p2.indexOf('x') === 0 ? `u${hexToNum(p2.substring(1))}` : p2;
+          let char = roundCharCode(p2);
           let ret = p1.toUpperCase();
 
           if (!isBottom(char)) {
@@ -62,13 +84,22 @@ export const getIcons = (lines: string[]): {icons: Prop; errors: string[]} => {
   }
 
   for (const item of Object.keys(group)) {
-    for (const name of group[item]) {
+    for (let name of group[item]) {
+      name = name.trim();
+
+      if (isEmptyStr(name)) {
+        continue;
+      }
+
       const icon = icons[item];
+      // console.log(name, item, icon)
 
       if (!!icon) {
         icons[name.toUpperCase()] = icon;
       }
     }
+
+    delete icons[item];
   }
 
   return {icons, errors};
@@ -89,7 +120,7 @@ export const getCmdlines = (font: string, icons: Prop): {cmdlines: string[]; uns
       cmdlines.push(`*setcust X_icnl:${ext}=<f'${font}'${color}${icons[ext]}>`);
     }
 
-    unset.push(`-|${ext} =`);
+    unset.push(`-|${ext}	=`);
   }
 
   unset.push('}');

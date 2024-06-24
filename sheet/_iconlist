@@ -37,12 +37,12 @@ doc	= u61788
 ;doc	= 
 dos	= u58921
 ;dos	= 
-gitignore	= u61907
-;gitignore	= 
+git	= u61907
+;git	= 
 img	= u61893
 ;img	= 
 java	= u59192
-;java	= 
+;java	= 
 js	= u58892
 ;js	= 
 lf	= u62558
@@ -71,7 +71,7 @@ web	= u61612
 ;web	= 
 win	= u61818
 ;win	= 
-;*を設定するとX_Dicn(directory)が上書きされる
+;PPx1.97現在、*を設定するとX_Dicn(directory)が上書きされるようだ
 ;*	= u61736
 ;*	= 
 [endext]
