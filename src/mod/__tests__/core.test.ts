@@ -29,19 +29,38 @@ describe('getIcons()', function () {
 
   it('Hexadecimal number is rounded to decimal number', () => {
     //NOTE: Keys are converted to uppercase
-    const lines = ['[ext]', 'hex=x1111', '[endext]'];
+    const lines = [
+      '[ext]',
+      'hex=x1111',
+      '[endext]'
+    ];
     const exp = {errors: [], icons: {HEX: 'u4369'}};
     expect(getIcons(lines)).toEqual(exp);
   });
 
   it('Empty key names are ignored', () => {
-    const lines = ['[group]', 'test1=1,,3', 'test2= 4 , , 6 ', '[endgroup]', '[ext]', 'test1=A', 'test2=B', '[endext]'];
+    const lines = [
+      '[group]',
+      'test1=1,,3',
+      'test2= 4 , , 6 ',
+      '[endgroup]',
+      '[ext]',
+      'test1=A',
+      'test2=B',
+      '[endext]'
+    ];
     const exp = {errors: [], icons: {'1': 'A', '3': 'A', '4': 'B', '6': 'B'}};
     expect(getIcons(lines)).toEqual(exp);
   });
 
   it('Error Patterns', () => {
-    const lines = ['[ext]', 'noValue1=x', 'noValue2=u', 'wrongValue=uABCD', '[endext]'];
+    const lines = [
+      '[ext]',
+      'noValue1=x',
+      'noValue2=u',
+      'wrongValue=uABCD',
+      '[endext]'
+    ];
     const exp = {errors: ['NOVALUE1', 'NOVALUE2', 'WRONGVALUE'], icons: {}};
     expect(getIcons(lines)).toEqual(exp);
   });
@@ -59,7 +78,12 @@ describe('getCmdlines()', function () {
         `*setcust X_icnl:${ext}=<f'${font}'${'T'}>`,
         `*setcust X_icnl:*=<f'${font}'c'_AUTO'A>`
       ],
-      unset: ['X_icnl	= {', '-|*	=', `-|${ext}	=`, '}']
+      unset: [
+        'X_icnl	= {',
+        '-|*	=',
+        `-|${ext}	=`,
+        '}'
+      ]
     };
     expect(getCmdlines(font, icons)).toEqual(exp);
   });
